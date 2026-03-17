@@ -1,3 +1,0 @@
-test1
-fix for hot fix
-hot fix tested by QA team
