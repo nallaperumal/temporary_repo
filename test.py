@@ -1,14 +1,20 @@
 from flask import Flask, render_template, jsonify, make_response, request
-
+from pydantic import BaseModel, Field, ValidationError
 app = Flask(__name__)
-
+class SoftwareEngg(BaseModel):
+    Name: str
+    Role: str
 @app.route('/json_resp', methods = ['GET', 'POST'])
 def myjsonPage():
-    testDict = [{"Name":"Linus Torvalds", "Role":"Software architect"}]
-    if request.method == 'POST':
-        new_data = request.get_json()
-        testDict.append(new_data)
-        return make_response(jsonify(testDict), 200)
+    try:
+        data = SoftwareEngg(**request.get_json())
+        testDict = [{"Name":"Linus Torvalds", "Role":"Software architect"}]
+        if request.method == 'POST':
+            new_data = request.get_json()
+            testDict.append(new_data)
+            return make_response(jsonify(testDict), 200)
+    except ValidationError as e:
+        return make_response(jsonify(e.errors()), 400)    
     return make_response(jsonify(testDict), 200)
 
 
