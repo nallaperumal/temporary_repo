@@ -1,11 +1,11 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, make_response
 
 app = Flask(__name__)
 
-@app.route('/json_resp')
+@app.route('/json_resp', methods = ['GET', 'POST'])
 def myjsonPage():
     testDict = {"Name":"Linus Torvalds", "Role":"Software architect"}
-    return jsonify(testDict)
+    return make_response(jsonify(testDict), 200)
 
 
 
