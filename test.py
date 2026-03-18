@@ -54,6 +54,14 @@ def myjsonPage():
         return make_response(jsonify(e.errors()), 400)    
     return make_response(jsonify(testDict), 200)
 
+@app.route('/oldpersons/<age>',  methods=['GET'])
+def fetchPersonsAbove(age):
+    all_people = session.query(Person).filter(Person.age > age).all()
+    results = []
+    for p in all_people:
+        results.append({"name": p.name, "role": p.role, "age": p.age})
+    return jsonify(results) 
+
 @app.route('/persons',  methods=['GET'])
 def fetchPersons():
     all_people = session.query(Person).all()
