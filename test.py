@@ -1,10 +1,14 @@
-from flask import Flask, render_template, jsonify, make_response
+from flask import Flask, render_template, jsonify, make_response, request
 
 app = Flask(__name__)
 
 @app.route('/json_resp', methods = ['GET', 'POST'])
 def myjsonPage():
-    testDict = {"Name":"Linus Torvalds", "Role":"Software architect"}
+    testDict = [{"Name":"Linus Torvalds", "Role":"Software architect"}]
+    if request.method == 'POST':
+        new_data = request.get_json()
+        testDict.append(new_data)
+        return make_response(jsonify(testDict), 200)
     return make_response(jsonify(testDict), 200)
 
 
