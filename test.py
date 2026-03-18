@@ -54,7 +54,13 @@ def myjsonPage():
         return make_response(jsonify(e.errors()), 400)    
     return make_response(jsonify(testDict), 200)
 
-
+@app.route('/persons',  methods=['GET'])
+def fetchPersons():
+    all_people = session.query(Person).all()
+    results = []
+    for p in all_people:
+        results.append({"name": p.name, "role": p.role, "age": p.age})
+    return jsonify(results)
 
 @app.route('/')
 def hello_world():
