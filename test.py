@@ -1,8 +1,25 @@
 from flask import Flask, render_template, jsonify, make_response, request
 from pydantic import BaseModel, Field, ValidationError
 import logging
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 logging.basicConfig(level=logging.INFO)
+
+engine = create_engine('sqlite:///test.db')
+Base = declarative_base()
+class Person(Base):
+    __tablename__ = 'person'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    role = Column(String(250), nullable=False)
+    age = Column(Integer)
+
+Base.metadata.create_all(engine)
+# Create a session
+Session = sessionmaker(bind=engine)
+session = Session()
 
 app = Flask(__name__)
 
