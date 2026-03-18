@@ -11,6 +11,9 @@ from flask_migrate import Migrate
 
 #pip install Flask-SQLAlchemy Flask-Migrate
 
+#flask db migrate -m "message"
+#flask db upgrade 
+
 logging.basicConfig(level=logging.INFO)
 # engine = create_engine('sqlite:///test.db')
 # Base = declarative_base()
@@ -33,7 +36,7 @@ class Person(db.Model):
     name = db.Column(String(250), nullable=False)
     role = db.Column(String(250), nullable=False)
     age = db.Column(Integer)
-    
+
 @app.route("/login", methods=["POST"])
 @app.route("/signin", methods=["POST"])
 def login():
