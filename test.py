@@ -4,7 +4,7 @@ import logging
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from flask_jwt_extended import create_access_token, JWTManager
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required
 from datetime import timedelta
 
 logging.basicConfig(level=logging.INFO)
@@ -69,6 +69,7 @@ def myjsonPage():
     return make_response(jsonify(testDict), 200)
 
 @app.route('/oldpersons/<age>',  methods=['GET'])
+@jwt_required()
 def fetchPersonsAbove(age):
     all_people = session.query(Person).filter(Person.age > age).all()
     results = []
