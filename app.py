@@ -6,26 +6,34 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_jwt_extended import create_access_token, JWTManager, jwt_required
 from datetime import timedelta
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+#pip install Flask-SQLAlchemy Flask-Migrate
 
 logging.basicConfig(level=logging.INFO)
-engine = create_engine('sqlite:///test.db')
-Base = declarative_base()
-class Person(Base):
-    __tablename__ = 'person'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    role = Column(String(250), nullable=False)
-    age = Column(Integer)
+# engine = create_engine('sqlite:///test.db')
+# Base = declarative_base()
 
-Base.metadata.create_all(engine)
+
+# Base.metadata.create_all(engine)
 # Create a session
-Session = sessionmaker(bind=engine)
-session = Session()
+# Session = sessionmaker(bind=engine)
+# session = Session()
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "super-secret-key" 
 jwt = JWTManager(app)
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+class Person(db.Model):
+    __tablename__ = 'person'
+    id = db.Column(Integer, primary_key=True)
+    name = db.Column(String(250), nullable=False)
+    role = db.Column(String(250), nullable=False)
+    age = db.Column(Integer)
+    
 @app.route("/login", methods=["POST"])
 @app.route("/signin", methods=["POST"])
 def login():
@@ -60,8 +68,8 @@ def myjsonPage():
             app.logger.info(f"...input data:{type(new_data)}, val: {new_data}")
             testDict.append(new_data)
             new_person = Person(name = new_data["Name"], role = new_data["Role"], age = 60)
-            session.add(new_person)
-            session.commit()
+            db.session.add(new_person)
+            db.session.commit()
             return make_response(jsonify(testDict), 200)
     except ValidationError as e:
         app.logger.error(f"...validation failed:{e}")
