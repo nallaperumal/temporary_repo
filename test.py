@@ -4,9 +4,10 @@ import logging
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from flask_jwt_extended import create_access_token, JWTManager
+from datetime import timedelta
 
 logging.basicConfig(level=logging.INFO)
-
 engine = create_engine('sqlite:///test.db')
 Base = declarative_base()
 class Person(Base):
@@ -22,6 +23,19 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 app = Flask(__name__)
+app.config["JWT_SECRET_KEY"] = "super-secret-key" 
+jwt = JWTManager(app)
+
+@app.route("/login", methods=["POST"])
+@app.route("/signin", methods=["POST"])
+def login():
+    usr = request.json.get("usr", None)
+    pwd = request.json.get("pwd", None)
+    if(usr == "admin" and pwd == "admin"):
+        # from datetime import timedelta
+        access_token = create_access_token(identity=usr, expires_delta=timedelta(minutes=15))
+        return jsonify(access_token=access_token)
+    return jsonify({"msg": "Bad username or password"}), 401
 
 @app.before_request
 def log_request_info():
