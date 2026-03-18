@@ -36,6 +36,7 @@ class Person(db.Model):
     name = db.Column(String(250), nullable=False)
     role = db.Column(String(250), nullable=False)
     age = db.Column(Integer)
+    salary = db.Column(Integer)
 
 @app.route("/login", methods=["POST"])
 @app.route("/signin", methods=["POST"])
