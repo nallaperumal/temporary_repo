@@ -43,7 +43,11 @@ def myjsonPage():
         testDict = [{"Name":"Linus Torvalds", "Role":"Software architect"}]
         if request.method == 'POST':
             new_data = request.get_json()
+            app.logger.info(f"...input data:{type(new_data)}, val: {new_data}")
             testDict.append(new_data)
+            new_person = Person(name = new_data["Name"], role = new_data["Role"], age = 60)
+            session.add(new_person)
+            session.commit()
             return make_response(jsonify(testDict), 200)
     except ValidationError as e:
         app.logger.error(f"...validation failed:{e}")
